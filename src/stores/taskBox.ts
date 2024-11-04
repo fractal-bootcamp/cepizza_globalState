@@ -4,6 +4,9 @@ import { Task, TaskStatus, TaskBox } from "../types";
 export const callTask = create<TaskBox>((set, get) => ({
   // State
   tasks: [],
+  taskTitle: "",
+
+  setNewTaskTitle: (title) => set({ taskTitle: title }),
 
   // Actions
   addTask: (title) =>
@@ -18,6 +21,8 @@ export const callTask = create<TaskBox>((set, get) => ({
           createdAt: new Date(),
         },
       ],
+      //   clear input after adding
+      taskTitle: "", //
     })),
 
   updateTaskStatus: (id, status) =>
