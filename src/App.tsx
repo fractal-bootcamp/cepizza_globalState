@@ -51,27 +51,25 @@ function App() {
   ];
 
   return (
-    <div className="min-h-screen w-full bg-[#1a1b2e] flex items-center justify-center p-4 sm:p-6 md:p-8 lg:p-12">
-      <div className="w-full max-w-[90rem] bg-gradient-to-b from-[#2a2b3d] to-[#1f2033] rounded-lg shadow-xl p-4 sm:p-6 md:p-8 relative">
-        <h1 className="text-2xl sm:text-3xl font-semibold text-[#e2e8f0] mb-4 text-center">
+    <div className="min-h-screen w-full bg-gradient-to-b from-[#7FB2F0] to-[#ADD6FF] flex items-center justify-center p-4 sm:p-6 md:p-8 lg:p-12">
+      <div className="w-full max-w-[90rem] bg-white/90 rounded-[30px] shadow-2xl p-4 sm:p-6 md:p-8 relative border-4 border-white">
+        <h1 className="text-2xl sm:text-3xl font-bold text-[#4A6FA5] mb-4 text-center pixelated">
           Task Manager
         </h1>
         <TaskInput />
-        <div className="mt-4">
-          <DragDropContext onDragEnd={handleDragEnd}>
-            <div className="grid grid-cols-3 gap-4 md:gap-6 overflow-x-auto overflow-y-auto h-[calc(100vh-16rem)]">
-              {columns.map((column) => (
-                <TaskColumn
-                  key={column.id}
-                  id={column.id}
-                  title={column.title}
-                  tasks={column.tasks}
-                  icon={column.icon}
-                />
-              ))}
-            </div>
-          </DragDropContext>
-        </div>
+        <DragDropContext onDragEnd={handleDragEnd}>
+          <div className="mt-4 grid grid-cols-3 gap-4 md:gap-6 overflow-x-auto overflow-y-auto h-[calc(100vh-16rem)]">
+            {columns.map((column) => (
+              <TaskColumn
+                key={column.id}
+                id={column.id}
+                title={column.title}
+                tasks={column.tasks}
+                icon={column.icon}
+              />
+            ))}
+          </div>
+        </DragDropContext>
         <TaskActions />
         <DescriptionModal />
       </div>

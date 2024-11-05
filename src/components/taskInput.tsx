@@ -27,19 +27,30 @@ export const TaskInput: React.FC = () => {
           value={taskTitle}
           // allow status change
           onChange={(e) => setTaskTitle(e.target.value)}
-          placeholder="Task name..."
-          className="flex-1 bg-[#2a2b3d] text-[#e2e8f0] placeholder-[#6b7280] border border-[#4a5568] rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-[#6366f1]"
+          placeholder="name..."
+          className="bg-white/90 text-[#4A6FA5] placeholder-[#4A6FA5]/60 
+          border-2 border-[#ADD6FF] rounded-full px-6 py-3
+          focus:outline-none focus:ring-2 focus:ring-[#7FB2F0]
+          shadow-inner font-['Press_Start_2P'] text-sm"
+          style={{ fontFamily: "'Press Start 2P', cursive" }}
         />
         <textarea
           value={taskDescription}
           onChange={(e) => setTaskDescription(e.target.value)}
-          placeholder="Task description..."
-          className="bg-[#2a2b3d] text-[#e2e8f0] placeholder-[#6b7280] border border-[#4a5568] rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-[#6366f1] resize-none h-20"
+          placeholder="description..."
+          className="bg-white/80 text-[#4A6FA5] placeholder-[#4A6FA5]/60 
+          border-2 border-[#ADD6FF] rounded-[20px] px-6 py-3
+          focus:outline-none focus:ring-2 focus:ring-[#7FB2F0]
+          shadow-inner resize-none h-20 font-['Press_Start_2P'] text-sm"
+          style={{ fontFamily: "'Press Start 2P', cursive" }}
         />
         <button
           type="submit"
           disabled={!taskTitle.trim()}
-          className="bg-[#6366f1] text-white px-6 py-2 rounded-lg hover:bg-[#4f46e5] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+          className="bg-[#FFD700] text-[#4A6FA5] font-bold px-6 py-3 
+          rounded-full shadow-md hover:bg-[#FFC000] 
+          transition-colors disabled:opacity-50 
+          disabled:cursor-not-allowed transform hover:scale-105"
         >
           Add Task
         </button>

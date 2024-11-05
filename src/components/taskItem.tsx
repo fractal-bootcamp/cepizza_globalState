@@ -1,4 +1,4 @@
-// components/TaskItem.tsx
+// TaskItem.tsx
 import React, { useState } from "react";
 import { Task, TaskStatus } from "../types";
 import { useTaskStore } from "./taskStore";
@@ -14,6 +14,7 @@ interface TaskItemProps {
 
 export const TaskItem: React.FC<TaskItemProps> = ({ task, index }) => {
   const [isExpanded, setIsExpanded] = useState(false);
+  const [showStatusDropdown, setShowStatusDropdown] = useState(false);
   const { updateTaskStatus, selectedTaskId, setSelectedTask } = useTaskStore();
 
   const handleDescriptionToggle = (e: React.MouseEvent) => {
@@ -25,17 +26,17 @@ export const TaskItem: React.FC<TaskItemProps> = ({ task, index }) => {
     {
       value: "todo",
       label: "Todo",
-      icon: <MdOutlinePlaylistAdd className="w-5 h-5 text-red-500" />,
+      icon: <MdOutlinePlaylistAdd className="w-6 h-6 text-[#FF6B6B]" />,
     },
     {
       value: "in-progress",
       label: "In Progress",
-      icon: <RiTimeLine className="w-5 h-5 text-yellow-500" />,
+      icon: <RiTimeLine className="w-6 h-6 text-[#FFD700]" />,
     },
     {
       value: "completed",
       label: "Completed",
-      icon: <MdOutlineDoneAll className="w-5 h-5 text-green-500" />,
+      icon: <MdOutlineDoneAll className="w-6 h-6 text-[#77DD77]" />,
     },
   ];
 
@@ -45,7 +46,7 @@ export const TaskItem: React.FC<TaskItemProps> = ({ task, index }) => {
 
   return (
     <Draggable draggableId={task.id} index={index}>
-      {(provided) => (
+      {(provided, snapshot) => (
         <div
           ref={provided.innerRef}
           {...provided.draggableProps}
@@ -54,41 +55,61 @@ export const TaskItem: React.FC<TaskItemProps> = ({ task, index }) => {
             setSelectedTask(selectedTaskId === task.id ? null : task.id)
           }
           className={`
-            bg-[#2a2b3d] 
-            border 
-            border-[#4a5568] 
-            rounded-lg 
+            bg-white/90
+            border-2 
+            border-[#ADD6FF]
+            rounded-[15px]
             p-4 
-            shadow-md 
-            hover:shadow-lg 
-            transition-shadow 
+            shadow-lg
+            hover:shadow-xl
+            transition-all
+            duration-200
             cursor-pointer
-            ${selectedTaskId === task.id ? "ring-2 ring-[#6366f1]" : ""}
+            font-['Press_Start_2P']
+            text-sm
+            ${snapshot.isDragging ? "scale-105 rotate-2" : ""}
+            ${selectedTaskId === task.id ? "ring-4 ring-[#FFD700]" : ""}
           `}
         >
           <div className="flex flex-col gap-2">
             <div className="flex items-center justify-between gap-4">
-              <span className="text-[#e2e8f0] font-medium">{task.title}</span>
+              <span className="text-[#4A6FA5] font-['Press_Start_2P'] text-xs">
+                {task.title}
+              </span>
               <div className="flex items-center gap-2">
+                {/* Status Icon Dropdown */}
                 <div className="relative">
-                  <select
-                    value={task.status}
-                    onChange={(e) =>
-                      updateTaskStatus(task.id, e.target.value as TaskStatus)
-                    }
-                    onClick={(e) => e.stopPropagation()}
-                    className="bg-[#1a1b2e] text-[#e2e8f0] border border-[#4a5568] rounded-md px-3 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-[#6366f1] appearance-none pl-9"
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setShowStatusDropdown(!showStatusDropdown);
+                    }}
+                    className="p-2 hover:bg-white/50 rounded-full transition-colors"
                   >
-                    {statusOptions.map((option) => (
-                      <option key={option.value} value={option.value}>
-                        {option.label}
-                      </option>
-                    ))}
-                  </select>
-                  <div className="absolute left-2 top-1/2 -translate-y-1/2 pointer-events-none">
                     {currentStatus?.icon}
-                  </div>
+                  </button>
+                  {showStatusDropdown && (
+                    <div className="absolute right-0 mt-2 bg-white/90 rounded-lg shadow-lg py-2 z-50 border-2 border-[#ADD6FF]">
+                      {statusOptions.map((option) => (
+                        <button
+                          key={option.value}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            updateTaskStatus(
+                              task.id,
+                              option.value as TaskStatus
+                            );
+                            setShowStatusDropdown(false);
+                          }}
+                          className="w-full px-4 py-2 hover:bg-white/50 flex justify-center items-center transition-colors"
+                        >
+                          {option.icon}
+                        </button>
+                      ))}
+                    </div>
+                  )}
                 </div>
+                {/* Description Toggle */}
                 <TaskDescription
                   description={task.description}
                   isExpanded={isExpanded}
@@ -96,6 +117,12 @@ export const TaskItem: React.FC<TaskItemProps> = ({ task, index }) => {
                 />
               </div>
             </div>
+            {/* Description Content */}
+            {task.description && isExpanded && (
+              <p className="text-[#4A6FA5]/80 font-['Press_Start_2P'] text-xs mt-2 leading-relaxed">
+                {task.description}
+              </p>
+            )}
           </div>
         </div>
       )}

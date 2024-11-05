@@ -11,9 +11,9 @@ export const TaskColumn: React.FC<TaskColumnProps> = ({
 }) => {
   return (
     <div className="space-y-4 min-w-[250px]">
-      <div className="flex items-center gap-2 mb-2">
+      <div className="flex items-center gap-2 mb-2 bg-white/80 p-3 rounded-full shadow-md">
         {icon}
-        <h2 className="text-lg sm:text-xl font-semibold text-[#e2e8f0]">
+        <h2 className="text-lg sm:text-xl font-bold text-[#4A6FA5] pixelated">
           {title}
         </h2>
       </div>
@@ -22,7 +22,7 @@ export const TaskColumn: React.FC<TaskColumnProps> = ({
           <div
             {...provided.droppableProps}
             ref={provided.innerRef}
-            className={`space-y-4 min-h-[200px] p-2 rounded-lg ${
+            className={`space-y-4 min-h-[200px] p-4 rounded-[20px] transition-colors duration-200
               snapshot.isDraggingOver ? "bg-[#1f2033]" : ""
             }`}
           >
