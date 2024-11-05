@@ -1,5 +1,6 @@
 // define shape of task
 import { ReactNode } from "react";
+import { DraggableLocation } from "react-beautiful-dnd";
 
 export interface Task {
   id: string;
@@ -12,22 +13,37 @@ export interface Task {
 export type TaskStatus = "todo" | "in-progress" | "completed";
 
 export interface TaskColumnProps {
+  id: string;
   tasks: Task[];
   title: string;
   icon: ReactNode;
 }
 
+// types/index.ts
 export interface TaskStore {
   tasks: Task[];
   taskTitle: string;
+  taskDescription: string;
   selectedTaskId: string | null;
+  isEditingDescription: boolean;
+  editingDescription: string;
+  reorderTasks: (
+    source: DraggableLocation,
+    destination: DraggableLocation
+  ) => void;
 
+  // Actions
   setTaskTitle: (title: string) => void;
+  setTaskDescription: (description: string) => void;
   setSelectedTask: (taskId: string | null) => void;
-  addTask: (title: string) => void;
+  setIsEditingDescription: (isEditing: boolean) => void;
+  setEditingDescription: (description: string) => void;
+  addTask: (title: string, description: string) => void;
   updateTaskStatus: (id: string, status: TaskStatus) => void;
+  updateTaskDescription: (id: string, description: string) => void;
   deleteTask: (id: string) => void;
 
+  // Selectors
   getTodoTasks: () => Task[];
   getInProgressTasks: () => Task[];
   getCompletedTasks: () => Task[];

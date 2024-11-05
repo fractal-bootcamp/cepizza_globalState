@@ -3,18 +3,25 @@ import { useTaskStore } from "./taskStore";
 
 // add new tasks
 export const TaskInput: React.FC = () => {
-  const { taskTitle, setTaskTitle, addTask } = useTaskStore();
+  const {
+    taskTitle,
+    setTaskTitle,
+    addTask,
+    taskDescription,
+    setTaskDescription,
+  } = useTaskStore();
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (taskTitle.trim()) {
-      addTask(taskTitle);
+      addTask(taskTitle, taskDescription);
+      setTaskDescription("");
     }
   };
 
   return (
     <form onSubmit={handleSubmit} className="mb-4">
-      <div className="flex gap-2">
+      <div className="flex flex-col gap-2">
         <input
           type="text"
           value={taskTitle}
@@ -22,6 +29,12 @@ export const TaskInput: React.FC = () => {
           onChange={(e) => setTaskTitle(e.target.value)}
           placeholder="Task name..."
           className="flex-1 bg-[#2a2b3d] text-[#e2e8f0] placeholder-[#6b7280] border border-[#4a5568] rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-[#6366f1]"
+        />
+        <textarea
+          value={taskDescription}
+          onChange={(e) => setTaskDescription(e.target.value)}
+          placeholder="Task description..."
+          className="bg-[#2a2b3d] text-[#e2e8f0] placeholder-[#6b7280] border border-[#4a5568] rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-[#6366f1] resize-none h-20"
         />
         <button
           type="submit"
