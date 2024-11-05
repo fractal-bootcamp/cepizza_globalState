@@ -1,5 +1,11 @@
 import { create } from "zustand";
-import { TaskStatus, TaskStore } from "../types";
+import {
+  TaskStore,
+  taskSchema,
+  createTask,
+  validateTaskUpdate,
+  TaskStatus,
+} from "../types";
 import { DraggableLocation } from "react-beautiful-dnd";
 
 // stores/taskStore.ts
@@ -13,75 +19,70 @@ export const useTaskStore = create<TaskStore>((set, get) => ({
 
   setTaskTitle: (title) => set({ taskTitle: title }),
   setTaskDescription: (description) => set({ taskDescription: description }),
+
+  addTask: (title, description) => {
+    try {
+      const newTask = createTask(title, description);
+      set((state) => ({
+        tasks: [...state.tasks, newTask],
+        taskTitle: "",
+        taskDescription: "",
+      }));
+    } catch (error) {
+      console.error("Failed to create task:", error);
+    }
+  },
+
+  updateTaskStatus: (id, status) => {
+    try {
+      const validUpdate = validateTaskUpdate({ status });
+      set((state) => ({
+        tasks: state.tasks.map((task) =>
+          task.id === id ? { ...task, ...validUpdate } : task
+        ),
+      }));
+    } catch (error) {
+      console.error("Failed to update task status:", error);
+    }
+  },
+
   setSelectedTask: (taskId) => set({ selectedTaskId: taskId }),
   setIsEditingDescription: (isEditing) =>
     set({ isEditingDescription: isEditing }),
   setEditingDescription: (description) =>
     set({ editingDescription: description }),
 
-  addTask: (title, description) =>
-    set((state) => ({
-      tasks: [
-        ...state.tasks,
-        {
-          id: crypto.randomUUID(),
-          title,
-          description,
-          status: "todo" as TaskStatus,
-          createdAt: new Date(),
-        },
-      ],
-      taskTitle: "",
-      taskDescription: "",
-    })),
-
-  updateTaskStatus: (id, status: TaskStatus) =>
-    set((state) => ({
-      tasks: state.tasks.map((task) =>
-        task.id === id ? { ...task, status } : task
-      ),
-    })),
-
-  updateTaskDescription: (id, description) =>
-    set((state) => ({
-      tasks: state.tasks.map((task) =>
-        task.id === id ? { ...task, description } : task
-      ),
-      isEditingDescription: false,
-    })),
+  updateTaskDescription: (id, description) => {
+    try {
+      const validUpdate = validateTaskUpdate({ description });
+      set((state) => ({
+        tasks: state.tasks.map((task) =>
+          task.id === id ? { ...task, ...validUpdate } : task
+        ),
+      }));
+    } catch (error) {
+      console.error("Failed to update task description:", error);
+    }
+  },
 
   deleteTask: (id) =>
     set((state) => ({
       tasks: state.tasks.filter((task) => task.id !== id),
-      selectedTaskId: null,
+      //   selectedTaskId: null,
     })),
+
+  reorderTasks: (source, destination) => {
+    set((state) => {
+      const tasks = [...state.tasks];
+      const [removed] = tasks.splice(source.index, 1);
+      tasks.splice(destination.index, 0, removed);
+      return { tasks };
+    });
+  },
 
   getTodoTasks: () => get().tasks.filter((task) => task.status === "todo"),
   getInProgressTasks: () =>
     get().tasks.filter((task) => task.status === "in-progress"),
   getCompletedTasks: () =>
     get().tasks.filter((task) => task.status === "completed"),
-
-  reorderTasks: (source, destination) =>
-    set((state) => {
-      const tasks = [...state.tasks];
-      const sourceStatus = source.droppableId as TaskStatus;
-      const destStatus = destination.droppableId as TaskStatus;
-
-      const sourceTasks = tasks.filter((task) => task.status === sourceStatus);
-      const [movedTask] = sourceTasks.splice(source.index, 1);
-
-      const updatedTask = { ...movedTask, status: destStatus };
-      const destTasks = tasks.filter((task) => task.status === destStatus);
-      destTasks.splice(destination.index, 0, updatedTask);
-
-      return {
-        tasks: [
-          ...tasks.filter(
-            (task) => task.status !== sourceStatus && task.status !== destStatus
-          ),
-          ...destTasks,
-        ],
-      };
-    }),
 }));

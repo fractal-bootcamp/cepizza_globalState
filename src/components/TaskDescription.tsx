@@ -1,5 +1,6 @@
 import React from "react";
 import { FiChevronDown, FiChevronUp } from "react-icons/fi";
+import { validateTaskUpdate } from "@/types";
 
 interface TaskDescriptionProps {
   description: string;
@@ -12,6 +13,14 @@ export const TaskDescription: React.FC<TaskDescriptionProps> = ({
   isExpanded,
   onToggle,
 }) => {
+  try {
+    // Validate the description
+    validateTaskUpdate({ description });
+  } catch (error) {
+    console.error("Invalid description:", error);
+    return null;
+  }
+
   if (!description) return null;
 
   // toggle down description

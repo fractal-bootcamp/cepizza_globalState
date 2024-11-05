@@ -6,6 +6,7 @@ import { TaskDescription } from "./TaskDescription";
 import { MdOutlinePlaylistAdd, MdOutlineDoneAll } from "react-icons/md";
 import { RiTimeLine } from "react-icons/ri";
 import { Draggable } from "react-beautiful-dnd";
+import { validateTaskUpdate } from "@/types";
 
 interface TaskItemProps {
   task: Task;
@@ -43,6 +44,23 @@ export const TaskItem: React.FC<TaskItemProps> = ({ task, index }) => {
   const currentStatus = statusOptions.find(
     (option) => option.value === task.status
   );
+
+  //handler function
+  const handleStatusUpdate = (newStatus: TaskStatus) => {
+    try {
+      // Validate the status update
+      const validUpdate = validateTaskUpdate({
+        status: newStatus,
+      }) as { status: TaskStatus };
+
+      // If validation passes, update the status
+      updateTaskStatus(task.id, validUpdate.status);
+      setShowStatusDropdown(false);
+    } catch (error) {
+      console.error("Invalid status update:", error);
+      // Optionally add error feedback to UI
+    }
+  };
 
   return (
     <Draggable draggableId={task.id} index={index}>
@@ -95,11 +113,7 @@ export const TaskItem: React.FC<TaskItemProps> = ({ task, index }) => {
                           key={option.value}
                           onClick={(e) => {
                             e.stopPropagation();
-                            updateTaskStatus(
-                              task.id,
-                              option.value as TaskStatus
-                            );
-                            setShowStatusDropdown(false);
+                            handleStatusUpdate(option.value as TaskStatus); // Use new handler here
                           }}
                           className="w-full px-4 py-2 hover:bg-white/50 flex justify-center items-center transition-colors"
                         >
