@@ -6,7 +6,7 @@ import { TaskDescription } from "./TaskDescription";
 import { MdOutlinePlaylistAdd, MdOutlineDoneAll } from "react-icons/md";
 import { RiTimeLine } from "react-icons/ri";
 import { Draggable } from "react-beautiful-dnd";
-import { validateTaskUpdate } from "@/types";
+import { validateTaskUpdate } from "../types/index.ts";
 
 interface TaskItemProps {
   task: Task;
@@ -14,14 +14,13 @@ interface TaskItemProps {
 }
 
 export const TaskItem: React.FC<TaskItemProps> = ({ task, index }) => {
-  const [isExpanded, setIsExpanded] = useState(false);
-  const [showStatusDropdown, setShowStatusDropdown] = useState(false);
-  const { updateTaskStatus, selectedTaskId, setSelectedTask } = useTaskStore();
-
   const handleDescriptionToggle = (e: React.MouseEvent) => {
     e.stopPropagation();
     setIsExpanded(!isExpanded);
   };
+  const [isExpanded, setIsExpanded] = useState(false);
+  const [showStatusDropdown, setShowStatusDropdown] = useState(false);
+  const { updateTaskStatus, selectedTaskId, setSelectedTask } = useTaskStore();
 
   const statusOptions = [
     {

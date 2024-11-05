@@ -76,7 +76,7 @@ export const useTaskStore = create<TaskStore>((set, get) => ({
       const tasks = [...state.tasks];
       const [removed] = tasks.splice(source.index, 1);
       tasks.splice(destination.index, 0, removed);
-      return { tasks };
+      return { ...state, tasks };
     });
   },
 

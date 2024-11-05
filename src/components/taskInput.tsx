@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useTaskStore } from "./taskStore";
-import { validateTaskUpdate } from "@/types";
+import { validateTaskUpdate } from "../types/index.ts";
 
 // add new tasks
 export const TaskInput: React.FC = () => {

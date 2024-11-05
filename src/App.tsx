@@ -7,10 +7,16 @@ import { useTaskStore } from "./components/taskStore";
 import { MdOutlinePlaylistAdd, MdOutlineDoneAll } from "react-icons/md";
 import { RiTimeLine } from "react-icons/ri";
 import { DragDropContext, DropResult } from "react-beautiful-dnd";
+import { TaskStatus } from "./types";
 
 function App() {
-  const { getTodoTasks, getInProgressTasks, getCompletedTasks, reorderTasks } =
-    useTaskStore();
+  const {
+    getTodoTasks,
+    getInProgressTasks,
+    getCompletedTasks,
+    reorderTasks,
+    updateTaskStatus,
+  } = useTaskStore();
 
   const handleDragEnd = (result: DropResult) => {
     const { source, destination } = result;
@@ -27,8 +33,22 @@ function App() {
       return;
     }
 
-    reorderTasks(source, destination);
+    try {
+      // Update status if moved to a different column
+      if (source.droppableId !== destination.droppableId) {
+        updateTaskStatus(
+          result.draggableId,
+          destination.droppableId as TaskStatus
+        );
+      }
+
+      // Handle reordering
+      reorderTasks(source, destination);
+    } catch (error) {
+      console.error("Failed to update task:", error);
+    }
   };
+
   const columns = [
     {
       id: "todo",

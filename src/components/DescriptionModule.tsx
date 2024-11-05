@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useTaskStore } from "./taskStore";
-import { validateTaskUpdate } from "@/types";
+import { validateTaskUpdate } from "../types/index.ts";
 
 export const DescriptionModal = () => {
   const {

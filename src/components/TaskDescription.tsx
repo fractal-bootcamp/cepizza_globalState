@@ -1,6 +1,6 @@
 import React from "react";
 import { FiChevronDown, FiChevronUp } from "react-icons/fi";
-import { validateTaskUpdate } from "@/types";
+import { validateTaskUpdate } from "../types/index.ts";
 
 interface TaskDescriptionProps {
   description: string;
