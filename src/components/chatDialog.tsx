@@ -11,20 +11,26 @@ import { Button } from "@/components/ui/button";
 import { MessageCircle, Send } from "lucide-react";
 import { useTaskStore } from "./taskStore";
 import { useState } from "react";
-import { generateTask } from "@/lib/openAi";
+import { generateTask } from "@/lib/AnthropicAI";
 
 export function ChatDialog() {
   const { isModalOpen, setIsModalOpen, addTask } = useTaskStore();
   const [prompt, setPrompt] = useState("");
   const [isLoading, setIsLoading] = useState(false);
 
-  const handleSubmit = async () => {
+  const handleGenerateTask = async () => {
     if (!prompt.trim() || isLoading) return;
 
     setIsLoading(true);
     try {
-      const task = await generateTask(prompt);
-      addTask(task.title, task.description);
+      // get the JSON response from Claude
+      const generatedTask = await generateTask(prompt);
+      console.log("we got the quest:", generatedTask);
+
+      // use title and descrip from response to add new task!
+      addTask(generatedTask.title, generatedTask.description);
+
+      // clear form and close modal
       setPrompt("");
       setIsModalOpen(false);
     } catch (error) {
@@ -103,21 +109,7 @@ export function ChatDialog() {
 
         <div className="border-t border-white/20 pt-4 bg-white/90 rounded-2xl p-4">
           <Button
-            onClick={async () => {
-              if (!prompt.trim() || isLoading) return;
-
-              setIsLoading(true);
-              try {
-                const task = await generateTask(prompt);
-                addTask(task.title, task.description);
-                setPrompt("");
-                setIsModalOpen(false);
-              } catch (error) {
-                console.error("failed:", error);
-              } finally {
-                setIsLoading(false);
-              }
-            }}
+            onClick={handleGenerateTask}
             disabled={isLoading || !prompt.trim()}
             className="w-full rounded-xl bg-[#7FB2F0] hover:bg-[#ADD6FF]
             text-white border-2 border-white/80 p-4 h-auto
