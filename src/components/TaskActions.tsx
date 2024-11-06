@@ -23,21 +23,29 @@ export const TaskActions = () => {
   };
 
   return (
-    <div className="absolute top-2 right-4 z-10 flex gap-2">
+    <div className="absolute top-4 right-4 z-10 flex gap-2">
       <button
         onClick={handleStartEditing}
-        className="bg-[#6366f1] text-white p-2 sm:p-3 rounded-lg shadow-lg hover:bg-[#4f46e5] transition-colors flex items-center gap-2"
+        className="bg-gradient-to-r from-[#7FB2F0] to-[#ADD6FF] 
+          text-white p-2 sm:p-3 rounded-[15px] shadow-lg 
+          hover:shadow-xl transition-all duration-200 
+          flex items-center gap-2 border-2 border-white/80
+          font-['Press_Start_2P'] text-sm"
       >
         <FiEdit2 className="w-5 h-5" />
-        <span className="hidden sm:inline">Edit Description</span>
+        <span className="hidden sm:inline">Edit</span>
       </button>
 
       <button
         onClick={() => deleteTask(selectedTaskId)}
-        className="bg-[#dc2626] text-white p-2 sm:p-3 rounded-lg shadow-lg hover:bg-[#ef4444] transition-colors flex items-center gap-2"
+        className="bg-gradient-to-r from-[#FF6B6B] to-[#FFA6A6] 
+          text-white p-2 sm:p-3 rounded-[15px] shadow-lg 
+          hover:shadow-xl transition-all duration-200 
+          flex items-center gap-2 border-2 border-white/80
+          font-['Press_Start_2P'] text-sm"
       >
         <RiDeleteBin2Fill className="w-5 h-5" />
-        <span className="hidden sm:inline">Delete Task</span>
+        <span className="hidden sm:inline">Delete</span>
       </button>
     </div>
   );

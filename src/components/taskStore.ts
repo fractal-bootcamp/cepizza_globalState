@@ -53,10 +53,9 @@ export const useTaskStore = create<TaskStore>()(
         set({ editingDescription: description }),
 
       updateTaskDescription: (id, description) => {
-        const validUpdate = validateTaskUpdate({ description });
         set((state) => ({
           tasks: state.tasks.map((task) =>
-            task.id === id ? { ...task, ...validUpdate } : task
+            task.id === id ? { ...task, description } : task
           ),
         }));
       },
