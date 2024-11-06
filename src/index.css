@@ -2,3 +2,34 @@
 @tailwind components;
 @tailwind utilities;
 
+@layer utilities {
+    .pixelated {
+      font-family: 'Press Start 2P', cursive;
+      text-shadow: 2px 2px 0 rgba(0,0,0,0.1);
+    }
+  }
+
+  @layer base {
+    input::placeholder,
+    textarea::placeholder {
+      font-family: 'Press Start 2P', cursive;
+      font-size: 0.75rem; /* Adjust size as needed */
+      opacity: 0.6;
+    }
+  
+    select, option {
+      font-family: 'Press Start 2P', cursive;
+    }
+  }
+/* // clouds  */
+.delay-300 {
+    animation-delay: -30s;
+  }
+  
+  .delay-500 {
+    animation-delay: -15s;
+  }
+  
+  .delay-700 {
+    animation-delay: -45s;
+  }

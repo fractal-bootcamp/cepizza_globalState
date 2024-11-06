@@ -1,87 +1,89 @@
 import { create } from "zustand";
-import { TaskStatus, TaskStore } from "../types";
-import { DraggableLocation } from "react-beautiful-dnd";
+import { persist, createJSONStorage } from "zustand/middleware";
+import {
+  TaskStore,
+  taskSchema,
+  createTask,
+  validateTaskUpdate,
+  TaskStatus,
+} from "../types";
+import { boolean } from "zod";
 
 // stores/taskStore.ts
-export const useTaskStore = create<TaskStore>((set, get) => ({
-  tasks: [],
-  taskTitle: "",
-  taskDescription: "",
-  selectedTaskId: null,
-  isEditingDescription: false,
-  editingDescription: "",
-
-  setTaskTitle: (title) => set({ taskTitle: title }),
-  setTaskDescription: (description) => set({ taskDescription: description }),
-  setSelectedTask: (taskId) => set({ selectedTaskId: taskId }),
-  setIsEditingDescription: (isEditing) =>
-    set({ isEditingDescription: isEditing }),
-  setEditingDescription: (description) =>
-    set({ editingDescription: description }),
-
-  addTask: (title, description) =>
-    set((state) => ({
-      tasks: [
-        ...state.tasks,
-        {
-          id: crypto.randomUUID(),
-          title,
-          description,
-          status: "todo" as TaskStatus,
-          createdAt: new Date(),
-        },
-      ],
+export const useTaskStore = create<TaskStore>()(
+  persist(
+    (set, get) => ({
+      tasks: [],
       taskTitle: "",
       taskDescription: "",
-    })),
-
-  updateTaskStatus: (id, status: TaskStatus) =>
-    set((state) => ({
-      tasks: state.tasks.map((task) =>
-        task.id === id ? { ...task, status } : task
-      ),
-    })),
-
-  updateTaskDescription: (id, description) =>
-    set((state) => ({
-      tasks: state.tasks.map((task) =>
-        task.id === id ? { ...task, description } : task
-      ),
-      isEditingDescription: false,
-    })),
-
-  deleteTask: (id) =>
-    set((state) => ({
-      tasks: state.tasks.filter((task) => task.id !== id),
       selectedTaskId: null,
-    })),
+      isEditingDescription: false,
+      editingDescription: "",
 
-  getTodoTasks: () => get().tasks.filter((task) => task.status === "todo"),
-  getInProgressTasks: () =>
-    get().tasks.filter((task) => task.status === "in-progress"),
-  getCompletedTasks: () =>
-    get().tasks.filter((task) => task.status === "completed"),
+      isModalOpen: false,
+      setIsModalOpen: (isOpen) => set({ isModalOpen: isOpen }),
 
-  reorderTasks: (source, destination) =>
-    set((state) => {
-      const tasks = [...state.tasks];
-      const sourceStatus = source.droppableId as TaskStatus;
-      const destStatus = destination.droppableId as TaskStatus;
+      // state mutators (actions)
+      setTaskTitle: (title) => set({ taskTitle: title }),
+      setTaskDescription: (description) =>
+        set({ taskDescription: description }),
 
-      const sourceTasks = tasks.filter((task) => task.status === sourceStatus);
-      const [movedTask] = sourceTasks.splice(source.index, 1);
+      addTask: (title, description) => {
+        const newTask = createTask(title, description);
+        set((state) => ({
+          tasks: [...state.tasks, newTask],
+          taskTitle: "",
+          taskDescription: "",
+        }));
+      },
 
-      const updatedTask = { ...movedTask, status: destStatus };
-      const destTasks = tasks.filter((task) => task.status === destStatus);
-      destTasks.splice(destination.index, 0, updatedTask);
-
-      return {
-        tasks: [
-          ...tasks.filter(
-            (task) => task.status !== sourceStatus && task.status !== destStatus
+      updateTaskStatus: (id, status) => {
+        const validUpdate = validateTaskUpdate({ status });
+        set((state) => ({
+          tasks: state.tasks.map((task) =>
+            task.id === id ? { ...task, ...validUpdate } : task
           ),
-          ...destTasks,
-        ],
-      };
+        }));
+      },
+
+      setSelectedTask: (taskId) => set({ selectedTaskId: taskId }),
+      setIsEditingDescription: (isEditing) =>
+        set({ isEditingDescription: isEditing }),
+      setEditingDescription: (description) =>
+        set({ editingDescription: description }),
+
+      updateTaskDescription: (id, description) => {
+        set((state) => ({
+          tasks: state.tasks.map((task) =>
+            task.id === id ? { ...task, description } : task
+          ),
+        }));
+      },
+
+      deleteTask: (id) =>
+        set((state) => ({
+          tasks: state.tasks.filter((task) => task.id !== id),
+          //   selectedTaskId: null,
+        })),
+
+      reorderTasks: (source, destination) => {
+        set((state) => {
+          const tasks = [...state.tasks]; // copy current task
+          const [removed] = tasks.splice(source.index, 1); // remove from source
+          tasks.splice(destination.index, 0, removed); // insert at destination
+          return { ...state, tasks }; // update the state
+        });
+      },
+
+      getTodoTasks: () => get().tasks.filter((task) => task.status === "todo"),
+      getInProgressTasks: () =>
+        get().tasks.filter((task) => task.status === "in-progress"),
+      getCompletedTasks: () =>
+        get().tasks.filter((task) => task.status === "completed"),
     }),
-}));
+    {
+      name: `task-store`,
+      storage: createJSONStorage(() => localStorage),
+    }
+  )
+);
