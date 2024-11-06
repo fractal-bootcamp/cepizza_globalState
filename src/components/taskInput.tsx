@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import { useTaskStore } from "./taskStore";
-import { validateTaskUpdate } from "../types/index.ts";
 
 // add new tasks
 export const TaskInput: React.FC = () => {
@@ -18,43 +17,9 @@ export const TaskInput: React.FC = () => {
     description?: string;
   }>({});
 
-  const validateInput = () => {
-    try {
-      validateTaskUpdate({
-        title: taskTitle,
-        description: taskDescription,
-      });
-      setErrors({});
-      return true;
-    } catch (error) {
-      if (error instanceof Error) {
-        // parse zod errors and set in state
-        const zodError = error as any;
-        const newErrors: typeof errors = {};
-
-        zodError.errors?.forEach((err: any) => {
-          const field = err.path[0] as keyof typeof errors;
-          newErrors[field] = err.message;
-        });
-        setErrors(newErrors);
-      }
-      return false;
-    }
-  };
-
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    // Validate before submitting
-    if (validateInput()) {
-      try {
-        addTask(taskTitle, taskDescription);
-        setTaskTitle("");
-        setTaskDescription("");
-        setErrors({});
-      } catch (error) {
-        console.error("Failed to add task:", error);
-      }
-    }
+    addTask(taskTitle, taskDescription);
   };
 
   return (
