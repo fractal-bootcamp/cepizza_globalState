@@ -34,6 +34,7 @@ export const taskStoreSchema = z
     selectedTaskId: z.string().nullable(),
     isEditingDescription: z.boolean(),
     editingDescription: z.string(),
+    isModalOpen: z.boolean(),
   })
   .and(
     // 1️⃣ Combines with previous schema definition
@@ -47,6 +48,10 @@ export const taskStoreSchema = z
           z.custom<DraggableLocation>() // 5️⃣ Second arg: Same type
         )
         .returns(z.void()), // 6️⃣ Function returns nothing (void)
+
+      // modal controls
+      setIsModalOpen: z.function().args(z.boolean()).returns(z.void()),
+
       setTaskTitle: z.function().args(z.string()).returns(z.void()),
 
       setTaskDescription: z.function().args(z.string()).returns(z.void()),

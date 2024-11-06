@@ -7,6 +7,7 @@ import {
   validateTaskUpdate,
   TaskStatus,
 } from "../types";
+import { boolean } from "zod";
 
 // stores/taskStore.ts
 export const useTaskStore = create<TaskStore>()(
@@ -18,6 +19,9 @@ export const useTaskStore = create<TaskStore>()(
       selectedTaskId: null,
       isEditingDescription: false,
       editingDescription: "",
+
+      isModalOpen: false,
+      setIsModalOpen: (isOpen) => set({ isModalOpen: isOpen }),
 
       // state mutators (actions)
       setTaskTitle: (title) => set({ taskTitle: title }),

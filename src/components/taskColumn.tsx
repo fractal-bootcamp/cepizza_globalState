@@ -22,13 +22,15 @@ export const TaskColumn: React.FC<TaskColumnProps> = ({
           <div
             {...provided.droppableProps}
             ref={provided.innerRef}
-            className={`space-y-4 min-h-[200px] p-4 rounded-[20px] transition-colors duration-200
+            className={`space-y-4 min-h-[200px] p-4 rounded-[20px] transition-colors duration-200 ${
               snapshot.isDraggingOver ? "bg-[#1f2033]" : ""
             }`}
           >
-            {tasks.map((task, index) => (
-              <TaskItem key={task.id} task={task} index={index} />
-            ))}
+            {Array.isArray(tasks)
+              ? tasks.map((task, index) => (
+                  <TaskItem key={task.id} task={task} index={index} />
+                ))
+              : null}
             {provided.placeholder}
           </div>
         )}
