@@ -10,10 +10,29 @@ import {
 import { Button } from "@/components/ui/button";
 import { MessageCircle, Send } from "lucide-react";
 import { useTaskStore } from "./taskStore";
+import { useState } from "react";
+import { generateTask } from "@/lib/openAi";
 
 export function ChatDialog() {
-  const { isModalOpen, setIsModalOpen } = useTaskStore();
+  const { isModalOpen, setIsModalOpen, addTask } = useTaskStore();
+  const [prompt, setPrompt] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
 
+  const handleSubmit = async () => {
+    if (!prompt.trim() || isLoading) return;
+
+    setIsLoading(true);
+    try {
+      const task = await generateTask(prompt);
+      addTask(task.title, task.description);
+      setPrompt("");
+      setIsModalOpen(false);
+    } catch (error) {
+      console.error("failed:", error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
   return (
     <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
       <DialogTrigger asChild>
@@ -23,7 +42,7 @@ export function ChatDialog() {
             border-2 border-white/80 p-4 flex items-center gap-2"
         >
           <MessageCircle className="h-5 w-5" />
-          <span className="font-bold pixelated">Chat</span>
+          <span className="font-bold pixelated">AI Chat</span>
         </Button>
       </DialogTrigger>
       <DialogContent
@@ -33,12 +52,11 @@ export function ChatDialog() {
         <DialogHeader className="bg-white/90 rounded-2xl p-4 mb-4">
           <DialogTitle className="text-xl font-bold text-[#4A6FA5] pixelated flex items-center gap-2">
             <MessageCircle className="h-5 w-5" />
-            Task Chat
+            Generate AI Task
           </DialogTitle>
         </DialogHeader>
 
-        <div className="flex-1 overflow-y-auto space-y-4 p-4 mb-4 bg-white/90 rounded-2xl max-h-[400px]">
-          {/* Example messages - you can make these dynamic later */}
+        {/* <div className="flex-1 overflow-y-auto space-y-4 p-4 mb-4 bg-white/90 rounded-2xl max-h-[400px]">
           <div className="bg-[#7FB2F0]/10 p-3 rounded-2xl ml-auto max-w-[80%]">
             <p className="text-[#4A6FA5] font-medium">
               How's the task progress?
@@ -51,9 +69,21 @@ export function ChatDialog() {
             </p>
             <span className="text-xs text-[#4A6FA5]/70">12:35 PM</span>
           </div>
+        </div> */}
+
+        <div className="flex-1 bg-white/90 rounded-2xl p-4 mb-4">
+          <textarea
+            value={prompt}
+            onChange={(e) => setPrompt(e.target.value)}
+            placeholder="describe your task.."
+            className="w-full bg-white text-[#4A6FA5] 
+        border-2 border-[#7FB2F0] rounded-xl p-3 
+        focus: outline-none focus:ring-2 focus-ring-[#7FB2F0] 
+        shadow-inner resize-none h-32 font-['Press_Start_2P'] text-sm"
+          />
         </div>
 
-        <div className="border-t border-white/20 pt-4 bg-white/90 rounded-2xl p-4">
+        {/* <div className="border-t border-white/20 pt-4 bg-white/90 rounded-2xl p-4">
           <div className="flex gap-2">
             <input
               type="text"
@@ -69,6 +99,32 @@ export function ChatDialog() {
               <Send className="h-5 w-5" />
             </Button>
           </div>
+        </div> */}
+
+        <div className="border-t border-white/20 pt-4 bg-white/90 rounded-2xl p-4">
+          <Button
+            onClick={async () => {
+              if (!prompt.trim() || isLoading) return;
+
+              setIsLoading(true);
+              try {
+                const task = await generateTask(prompt);
+                addTask(task.title, task.description);
+                setPrompt("");
+                setIsModalOpen(false);
+              } catch (error) {
+                console.error("failed:", error);
+              } finally {
+                setIsLoading(false);
+              }
+            }}
+            disabled={isLoading || !prompt.trim()}
+            className="w-full rounded-xl bg-[#7FB2F0] hover:bg-[#ADD6FF]
+            text-white border-2 border-white/80 p-4 h-auto
+            font-['Press_Start_2p'] text-sm"
+          >
+            {isLoading ? "creating lists.." : "generate"}
+          </Button>
         </div>
       </DialogContent>
     </Dialog>

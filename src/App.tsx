@@ -8,7 +8,7 @@ import { MdOutlinePlaylistAdd, MdOutlineDoneAll } from "react-icons/md";
 import { RiTimeLine } from "react-icons/ri";
 import { DragDropContext, DropResult } from "react-beautiful-dnd";
 import { TaskStatus } from "./types";
-import { ChatDialog } from "./components/taskModal";
+import { ChatDialog } from "./components/chatDialog";
 
 function App() {
   const {
